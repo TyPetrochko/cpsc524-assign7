@@ -29,18 +29,49 @@ LOOP BEGIN at util.c(19,3)
 LOOP END
 ===========================================================================
 
-Begin optimization report for: getRandomChromosome(int)
+Begin optimization report for: copyGraph(graph)
 
     Report from: Interprocedural optimizations [ipo]
 
-INLINE REPORT: (getRandomChromosome(int)) [2] util.c(37,38)
+INLINE REPORT: (copyGraph(graph)) [2] util.c(37,25)
 
 
     Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
 
 
-LOOP BEGIN at util.c(42,3)
-   remark #15527: loop was not vectorized: function call to rand() cannot be vectorized   [ util.c(43,8) ]
+LOOP BEGIN at util.c(43,3)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at util.c(45,5)
+   <Peeled>
+   LOOP END
+
+   LOOP BEGIN at util.c(45,5)
+      remark #15300: LOOP WAS VECTORIZED
+   LOOP END
+
+   LOOP BEGIN at util.c(45,5)
+   <Alternate Alignment Vectorized Loop>
+   LOOP END
+
+   LOOP BEGIN at util.c(45,5)
+   <Remainder>
+   LOOP END
+LOOP END
+===========================================================================
+
+Begin optimization report for: getRandomChromosome(int)
+
+    Report from: Interprocedural optimizations [ipo]
+
+INLINE REPORT: (getRandomChromosome(int)) [3] util.c(53,38)
+
+
+    Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
+
+
+LOOP BEGIN at util.c(58,3)
+   remark #15527: loop was not vectorized: function call to rand() cannot be vectorized   [ util.c(59,8) ]
 LOOP END
 ===========================================================================
 
@@ -48,28 +79,28 @@ Begin optimization report for: evaluateFitness(chromosome, graph)
 
     Report from: Interprocedural optimizations [ipo]
 
-INLINE REPORT: (evaluateFitness(chromosome, graph)) [3] util.c(52,43)
+INLINE REPORT: (evaluateFitness(chromosome, graph)) [4] util.c(68,43)
 
 
     Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
 
 
-LOOP BEGIN at util.c(54,3)
+LOOP BEGIN at util.c(70,3)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at util.c(57,5)
+   LOOP BEGIN at util.c(73,5)
    <Peeled>
    LOOP END
 
-   LOOP BEGIN at util.c(57,5)
+   LOOP BEGIN at util.c(73,5)
       remark #15300: LOOP WAS VECTORIZED
    LOOP END
 
-   LOOP BEGIN at util.c(57,5)
+   LOOP BEGIN at util.c(73,5)
    <Alternate Alignment Vectorized Loop>
    LOOP END
 
-   LOOP BEGIN at util.c(57,5)
+   LOOP BEGIN at util.c(73,5)
    <Remainder>
    LOOP END
 LOOP END
@@ -79,15 +110,52 @@ Begin optimization report for: randomSolution(graph)
 
     Report from: Interprocedural optimizations [ipo]
 
-INLINE REPORT: (randomSolution(graph)) [4] util.c(66,35)
-  -> INLINE: (67,30) getRandomChromosome(int)
+INLINE REPORT: (randomSolution(graph)) [5] util.c(81,35)
+  -> INLINE: (86,28) copyGraph(graph)
 
 
     Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
 
 
-LOOP BEGIN at util.c(42,3) inlined into util.c(67,30)
-   remark #15527: loop was not vectorized: function call to rand() cannot be vectorized   [ util.c(43,8) ]
+LOOP BEGIN at util.c(43,3) inlined into util.c(86,28)
+   remark #15542: loop was not vectorized: inner loop was already vectorized
+
+   LOOP BEGIN at util.c(45,5) inlined into util.c(86,28)
+   <Peeled>
+   LOOP END
+
+   LOOP BEGIN at util.c(45,5) inlined into util.c(86,28)
+      remark #15300: LOOP WAS VECTORIZED
+   LOOP END
+
+   LOOP BEGIN at util.c(45,5) inlined into util.c(86,28)
+   <Alternate Alignment Vectorized Loop>
+   LOOP END
+
+   LOOP BEGIN at util.c(45,5) inlined into util.c(86,28)
+   <Remainder>
+   LOOP END
+LOOP END
+
+LOOP BEGIN at util.c(95,7)
+   remark #15520: loop was not vectorized: loop with early exits cannot be vectorized unless it meets search loop idiom criteria
+LOOP END
+
+LOOP BEGIN at util.c(112,5)
+   remark #15344: loop was not vectorized: vector dependence prevents vectorization. First dependence is shown below. Use level 5 report for details
+   remark #15346: vector dependence: assumed OUTPUT dependence between adj_matrix line 115 and adj_matrix line 122
+LOOP END
+
+
+Non-optimizable loops:
+
+
+LOOP BEGIN at util.c(88,3)
+   remark #15536: loop was not vectorized: inner loop throttling prevents vectorization of this outer loop. Refer to inner loop message for more details.
+
+   LOOP BEGIN at util.c(94,5)
+      remark #15341: loop was not vectorized: nonstandard loop is not a vectorization candidate
+   LOOP END
 LOOP END
 ===========================================================================
 
@@ -95,49 +163,49 @@ Begin optimization report for: crossover(chromosome, chromosome)
 
     Report from: Interprocedural optimizations [ipo]
 
-INLINE REPORT: (crossover(chromosome, chromosome)) [5] util.c(70,49)
-  -> INLINE: (76,45) getRandomChromosome(int)
+INLINE REPORT: (crossover(chromosome, chromosome)) [6] util.c(130,49)
+  -> INLINE: (136,45) getRandomChromosome(int)
 
 
     Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
 
 
-LOOP BEGIN at util.c(42,3) inlined into util.c(76,45)
-   remark #15527: loop was not vectorized: function call to rand() cannot be vectorized   [ util.c(43,8) ]
+LOOP BEGIN at util.c(58,3) inlined into util.c(136,45)
+   remark #15527: loop was not vectorized: function call to rand() cannot be vectorized   [ util.c(59,8) ]
 LOOP END
 
-LOOP BEGIN at util.c(80,3)
+LOOP BEGIN at util.c(140,3)
 <Peeled, Predicate Optimized v1>
 LOOP END
 
-LOOP BEGIN at util.c(80,3)
+LOOP BEGIN at util.c(140,3)
 <Predicate Optimized v1>
-   remark #25423: Condition at line 81 hoisted out of this loop
+   remark #25423: Condition at line 141 hoisted out of this loop
    remark #15300: LOOP WAS VECTORIZED
 LOOP END
 
-LOOP BEGIN at util.c(80,3)
+LOOP BEGIN at util.c(140,3)
 <Alternate Alignment Vectorized Loop, Predicate Optimized v1>
 LOOP END
 
-LOOP BEGIN at util.c(80,3)
+LOOP BEGIN at util.c(140,3)
 <Remainder, Predicate Optimized v1>
 LOOP END
 
-LOOP BEGIN at util.c(80,3)
+LOOP BEGIN at util.c(140,3)
 <Peeled, Predicate Optimized v2>
 LOOP END
 
-LOOP BEGIN at util.c(80,3)
+LOOP BEGIN at util.c(140,3)
 <Predicate Optimized v2>
    remark #15300: LOOP WAS VECTORIZED
 LOOP END
 
-LOOP BEGIN at util.c(80,3)
+LOOP BEGIN at util.c(140,3)
 <Alternate Alignment Vectorized Loop, Predicate Optimized v2>
 LOOP END
 
-LOOP BEGIN at util.c(80,3)
+LOOP BEGIN at util.c(140,3)
 <Remainder, Predicate Optimized v2>
 LOOP END
 ===========================================================================
@@ -146,26 +214,26 @@ Begin optimization report for: getNeighbors(chromosome *, int, int, chromosome *
 
     Report from: Interprocedural optimizations [ipo]
 
-INLINE REPORT: (getNeighbors(chromosome *, int, int, chromosome **, int, int)) [6] util.c(89,92)
+INLINE REPORT: (getNeighbors(chromosome *, int, int, chromosome **, int, int)) [7] util.c(149,92)
 
 
     Report from: Code generation optimizations [cg]
 
-util.c(90,12):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (1, 0)
-util.c(91,12):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (1, 0)
-util.c(92,12):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (1, 0)
-util.c(93,12):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (1, 0)
+util.c(150,12):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (1, 0)
+util.c(151,12):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (1, 0)
+util.c(152,12):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (1, 0)
+util.c(153,12):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (1, 0)
 ===========================================================================
 
 Begin optimization report for: sortChromosomes(chromosome *, graph, int)
 
     Report from: Interprocedural optimizations [ipo]
 
-INLINE REPORT: (sortChromosomes(chromosome *, graph, int)) [7] util.c(133,57)
-  -> INLINE: (134,3) quickSort(chromosome *, int, int, graph)
-    -> (109,8) partition(chromosome *, int, int, graph)
-    -> (110,4) quickSort(chromosome *, int, int, graph)
-    -> (111,4) quickSort(chromosome *, int, int, graph)
+INLINE REPORT: (sortChromosomes(chromosome *, graph, int)) [8] util.c(193,57)
+  -> INLINE: (194,3) quickSort(chromosome *, int, int, graph)
+    -> (169,8) partition(chromosome *, int, int, graph)
+    -> (170,4) quickSort(chromosome *, int, int, graph)
+    -> (171,4) quickSort(chromosome *, int, int, graph)
 
 ===========================================================================
 
@@ -173,10 +241,10 @@ Begin optimization report for: quickSort(chromosome *, int, int, graph)
 
     Report from: Interprocedural optimizations [ipo]
 
-INLINE REPORT: (quickSort(chromosome *, int, int, graph)) [8] util.c(103,1)
-  -> (109,8) partition(chromosome *, int, int, graph)
-  -> (110,4) quickSort(chromosome *, int, int, graph)
-  -> (111,4) quickSort(chromosome *, int, int, graph)
+INLINE REPORT: (quickSort(chromosome *, int, int, graph)) [9] util.c(163,1)
+  -> (169,8) partition(chromosome *, int, int, graph)
+  -> (170,4) quickSort(chromosome *, int, int, graph)
+  -> (171,4) quickSort(chromosome *, int, int, graph)
 
 ===========================================================================
 
@@ -184,81 +252,81 @@ Begin optimization report for: partition(chromosome *, int, int, graph)
 
     Report from: Interprocedural optimizations [ipo]
 
-INLINE REPORT: (partition(chromosome *, int, int, graph)) [9] util.c(116,54)
-  -> INLINE: (119,11) evaluateFitness(chromosome, graph)
-  -> INLINE: (124,30) evaluateFitness(chromosome, graph)
-  -> INLINE: (125,20) evaluateFitness(chromosome, graph)
+INLINE REPORT: (partition(chromosome *, int, int, graph)) [10] util.c(176,54)
+  -> INLINE: (179,11) evaluateFitness(chromosome, graph)
+  -> INLINE: (184,30) evaluateFitness(chromosome, graph)
+  -> INLINE: (185,20) evaluateFitness(chromosome, graph)
 
 
     Report from: Loop nest, Vector & Auto-parallelization optimizations [loop, vec, par]
 
 
-LOOP BEGIN at util.c(54,3) inlined into util.c(119,11)
+LOOP BEGIN at util.c(70,3) inlined into util.c(179,11)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at util.c(57,5) inlined into util.c(119,11)
+   LOOP BEGIN at util.c(73,5) inlined into util.c(179,11)
    <Peeled>
    LOOP END
 
-   LOOP BEGIN at util.c(57,5) inlined into util.c(119,11)
+   LOOP BEGIN at util.c(73,5) inlined into util.c(179,11)
       remark #15300: LOOP WAS VECTORIZED
    LOOP END
 
-   LOOP BEGIN at util.c(57,5) inlined into util.c(119,11)
+   LOOP BEGIN at util.c(73,5) inlined into util.c(179,11)
    <Alternate Alignment Vectorized Loop>
    LOOP END
 
-   LOOP BEGIN at util.c(57,5) inlined into util.c(119,11)
+   LOOP BEGIN at util.c(73,5) inlined into util.c(179,11)
    <Remainder>
    LOOP END
 LOOP END
 
-LOOP BEGIN at util.c(58,57) inlined into util.c(124,30)
+LOOP BEGIN at util.c(74,57) inlined into util.c(184,30)
    remark #15542: loop was not vectorized: inner loop was already vectorized
 
-   LOOP BEGIN at util.c(124,25)
+   LOOP BEGIN at util.c(184,25)
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at util.c(54,3) inlined into util.c(124,30)
+      LOOP BEGIN at util.c(70,3) inlined into util.c(184,30)
          remark #15542: loop was not vectorized: inner loop was already vectorized
 
-         LOOP BEGIN at util.c(57,5) inlined into util.c(124,30)
+         LOOP BEGIN at util.c(73,5) inlined into util.c(184,30)
          <Peeled>
          LOOP END
 
-         LOOP BEGIN at util.c(57,5) inlined into util.c(124,30)
+         LOOP BEGIN at util.c(73,5) inlined into util.c(184,30)
             remark #15300: LOOP WAS VECTORIZED
          LOOP END
 
-         LOOP BEGIN at util.c(57,5) inlined into util.c(124,30)
+         LOOP BEGIN at util.c(73,5) inlined into util.c(184,30)
          <Alternate Alignment Vectorized Loop>
          LOOP END
 
-         LOOP BEGIN at util.c(57,5) inlined into util.c(124,30)
+         LOOP BEGIN at util.c(73,5) inlined into util.c(184,30)
          <Remainder>
          LOOP END
       LOOP END
    LOOP END
 
-   LOOP BEGIN at util.c(125,47)
+   LOOP BEGIN at util.c(185,47)
       remark #15542: loop was not vectorized: inner loop was already vectorized
 
-      LOOP BEGIN at util.c(54,3) inlined into util.c(125,20)
+      LOOP BEGIN at util.c(70,3) inlined into util.c(185,20)
          remark #15542: loop was not vectorized: inner loop was already vectorized
 
-         LOOP BEGIN at util.c(57,5) inlined into util.c(125,20)
+         LOOP BEGIN at util.c(73,5) inlined into util.c(185,20)
          <Peeled>
          LOOP END
 
-         LOOP BEGIN at util.c(57,5) inlined into util.c(125,20)
+         LOOP BEGIN at util.c(73,5) inlined into util.c(185,20)
             remark #15300: LOOP WAS VECTORIZED
          LOOP END
 
-         LOOP BEGIN at util.c(57,5) inlined into util.c(125,20)
+         LOOP BEGIN at util.c(73,5) inlined into util.c(185,20)
          <Alternate Alignment Vectorized Loop>
          LOOP END
 
-         LOOP BEGIN at util.c(57,5) inlined into util.c(125,20)
+         LOOP BEGIN at util.c(73,5) inlined into util.c(185,20)
          <Remainder>
          LOOP END
       LOOP END
@@ -267,13 +335,13 @@ LOOP END
 
     Report from: Code generation optimizations [cg]
 
-util.c(119,11):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (8, 0)
-util.c(124,30):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (8, 0)
-util.c(125,20):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (8, 0)
-util.c(127,9):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (8, 0)
-util.c(127,22):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (1, 0)
-util.c(127,35):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (8, 0), and destination (alignment, offset): (1, 0)
-util.c(129,7):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (8, 0)
-util.c(129,20):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (1, 0)
-util.c(129,33):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (8, 0), and destination (alignment, offset): (1, 0)
+util.c(179,11):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (8, 0)
+util.c(184,30):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (8, 0)
+util.c(185,20):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (8, 0)
+util.c(187,9):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (8, 0)
+util.c(187,22):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (1, 0)
+util.c(187,35):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (8, 0), and destination (alignment, offset): (1, 0)
+util.c(189,7):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (8, 0)
+util.c(189,20):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (1, 0), and destination (alignment, offset): (1, 0)
+util.c(189,33):remark #34000: call to memcpy implemented inline with loads and stores with proven source (alignment, offset): (8, 0), and destination (alignment, offset): (1, 0)
 ===========================================================================

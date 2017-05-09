@@ -21,6 +21,8 @@ typedef struct coord {
 
 graph getRandomGraph(int n, int m);
 
+graph copyGraph(graph g);
+
 chromosome getRandomChromosome(int n);
 
 graph getRandomGraph(int n, int m);

@@ -34,6 +34,22 @@ graph getRandomGraph(int n, int m){
   return toReturn;
 }
 
+graph copyGraph(graph g){
+  graph toReturn;
+  toReturn.n = g.n;
+  toReturn.m = g.m;
+
+  toReturn.adj_matrix = (int **) malloc(g.n * sizeof(int *));
+  for(int i = 0; i < g.n; i++){
+    toReturn.adj_matrix[i] = (int *) malloc(g.n * sizeof(int));
+    for(int j = 0; j < g.n; j++){
+      toReturn.adj_matrix[i][j] = g.adj_matrix[i][j];
+    }
+  }
+
+  return toReturn;
+}
+
 chromosome getRandomChromosome(int n){
   chromosome toReturn;
   toReturn.n = n;
@@ -59,12 +75,56 @@ int evaluateFitness(chromosome c, graph g){
     }
   }
 
-  return (sum*(-1)); // we want to MINIMIZE this value
+  return (g.n + (g.n*g.n*g.n) - sum); // we want to MINIMIZE this value
 }
 
-// TODO do we need this?
 chromosome randomSolution(graph g){
-  return getRandomChromosome(g.n);
+  chromosome toReturn;
+  toReturn.n = g.n;
+  toReturn.cover = (int *) calloc(g.n, sizeof(int));
+
+  graph gprime = copyGraph(g);
+
+  while(gprime.m > 0){
+    
+    // randomly choose an edge
+    int i = 0;
+    int j = 0;
+
+    for(i = 0; i < g.n; i++){
+      for(j = 0; j < g.n; j++){
+        if(gprime.adj_matrix[i][j])
+          goto escape;
+      }
+    }
+escape:
+
+    // remove the edge
+    gprime.m--;
+    gprime.adj_matrix[i][j] = 0;
+    gprime.adj_matrix[j][i] = 0;
+
+    // add the two vertices to the cover
+    toReturn.cover[i] = 1;
+    toReturn.cover[j] = 1;
+
+    // remove all edges covered by vertices i and j
+    for(int s = 0; s < g.n; s++){
+      if(gprime.adj_matrix[i][s]){
+        gprime.m--;
+        gprime.adj_matrix[i][s] = 0;
+        gprime.adj_matrix[s][i] = 0;
+      }
+      
+      if(gprime.adj_matrix[j][s]){
+        gprime.m--;
+        gprime.adj_matrix[j][s] = 0;
+        gprime.adj_matrix[s][j] = 0;
+      }
+    }
+  }
+
+  return toReturn;
 }
 
 chromosome crossover(chromosome c, chromosome d){

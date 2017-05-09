@@ -17,7 +17,7 @@
 #define TORUS_WIDTH (20)
 #define TORUS_HEIGHT (10)
 
-#define PARALLEL_ITERATIONS (10)
+#define PARALLEL_ITERATIONS (100)
 #define NUM_NEIGHBORS (4)
 
 /*
@@ -311,15 +311,27 @@ int main(int argc, char **argv){
   chromosome c = getRandomChromosome(n);
   
   double wctime, wctime_end, cputime;
+  
+  printf("Random fitness eval: %d\n", evaluateFitness(c, g));
 
+  // ========== BEGIN APPROX TEST ==========
+  printf("STARTING APPROX TEST\n");
+  
+  timing(&wctime, &cputime);
+  chromosome approx_solution = randomSolution(g);
+  timing(&wctime_end, &cputime); 
+  
+  printf("\tSolution fitness eval: %d\n", evaluateFitness(approx_solution, g)); 
+  printf("Approx time: %lf\n", wctime_end - wctime);
+  
+  // ========== BEGIN SERIAL TEST ==========
   printf("STARTING SERIAL TEST\n");
+  
   timing(&wctime, &cputime);
   chromosome serial_solution = serialTorusTest(n, m, g);
   timing(&wctime_end, &cputime);
   
-  printf("\tRandom fitness eval: %d\n", evaluateFitness(c, g));
   printf("\tSolution fitness eval: %d\n", evaluateFitness(serial_solution, g));
-  
   printf("Serial time: %lf\n", wctime_end - wctime);
 
   // timing(&wctime, &cputime);
