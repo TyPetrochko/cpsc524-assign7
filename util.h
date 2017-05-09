@@ -4,11 +4,14 @@
 #include <omp.h>
 
 typedef struct chromosome {
+  int n;
   int *cover;
 } chromosome;
 
 typedef struct graph {
   int **adj_matrix;
+  int n;
+  int m;
 } graph;
 
 typedef struct coord {
@@ -16,28 +19,26 @@ typedef struct coord {
   int y;
 } coord;
 
-graph copyGraph(int n);
-
 graph getRandomGraph(int n, int m);
-
-chromosome getBlankChromosome(int n);
 
 chromosome getRandomChromosome(int n);
 
 graph getRandomGraph(int n, int m);
 
-int evaluateFitness(chromosome c);
+int evaluateFitness(chromosome c, graph g);
 
-chromosome randomSolution();
+// TODO do we need this?
+chromosome randomSolution(graph g);
 
-chromosome crossover(chromosome c);
+chromosome crossover(chromosome c, chromosome d);
 
 // return an array of four neighboring chromosomes
-void getNeighbors(chromosome *buf, int x, int y, chromsome **torus, int width, int height);
+void getNeighbors(chromosome *buf, int x, int y, chromosome **torus, int width, int height);
 
+// DO NOT NEED THIS FOR NOW
 // get coordinates of neighboring chromosomes
-void getNeighborCoords(coord *buf, int x, int y, int width, int height);
+// void getNeighborCoords(coord *buf, int x, int y, int width, int height);
 
 // (in place) sort by fitness
-void sortChromosomes(chromosome *chroms);
+void sortChromosomes(chromosome *chroms, graph g, int n);
 
