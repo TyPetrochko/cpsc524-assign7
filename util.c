@@ -5,6 +5,8 @@
 #include <omp.h>
 #include "util.h"
 
+#define MUTATE (1)
+
 graph getRandomGraph(int n, int m){
   graph toReturn;
 
@@ -74,8 +76,8 @@ int evaluateFitness(chromosome c, graph g){
       sum += g.n * (1 - c.cover[i]) * (1 - c.cover[j] * g.adj_matrix[i][j]);
     }
   }
-
-  return (g.n + (g.n*g.n*g.n) - sum); // we want to MINIMIZE this value
+  int a = ((g.n + (g.n*g.n*g.n) - sum));
+  return a; // we want to MINIMIZE this value
 }
 
 chromosome randomSolution(graph g){
@@ -125,6 +127,19 @@ escape:
   }
 
   return toReturn;
+}
+
+void maybeMutate(chromosome c, int num, int denom){
+  if(!MUTATE)
+    return;
+  
+  if((rand() % denom) > (num - denom)){
+    int flip1 = rand() % c.n;
+    int flip2 = rand() % c.n;
+
+    c.cover[flip1] = !c.cover[flip1];
+    c.cover[flip2] = !c.cover[flip2];
+  }
 }
 
 chromosome crossover(chromosome c, chromosome d){
@@ -182,7 +197,7 @@ int partition(chromosome a[], int l, int r, graph g) {
   while(1)
   {
     do ++i; while( i <= r && evaluateFitness(a[i], g) <= pivot);
-    do --j; while( evaluateFitness(a[j], g) > pivot );
+    do --j; while( i >= j &&  evaluateFitness(a[j], g) > pivot );
     if( i >= j ) break;
     t = a[i]; a[i] = a[j]; a[j] = t;
   }

@@ -1,3 +1,0 @@
-
-parallel:31355 terminated with signal 11 at PC=2af147705078 SP=7fffe2866e28.  Backtrace:
-/usr/lib64/libinfinipath.so.4(+0x9078)[0x2af147705078]

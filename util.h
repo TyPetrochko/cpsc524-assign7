@@ -34,6 +34,8 @@ chromosome randomSolution(graph g);
 
 chromosome crossover(chromosome c, chromosome d);
 
+void maybeMutate(chromosome c, int num, int denom);
+
 // return an array of four neighboring chromosomes
 void getNeighbors(chromosome *buf, int x, int y, chromosome **torus, int width, int height);
 

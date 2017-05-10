@@ -15,14 +15,16 @@
 #define SERIAL_ITER (10)
 #define SERIAL_CHROMOSOMES (10) // must be divisible by two
 
-#define TORUS_WIDTH (10)
-#define TORUS_HEIGHT (6)
-
 #define PARALLEL_ITERATIONS (100)
 #define NUM_NEIGHBORS (4)
 
+int TORUS_WIDTH;
+int TORUS_HEIGHT;
+
+int NUMERATOR;
+int DENOMINATOR;
+
 chromosome serialTorusTest(int n, int m, graph g){
- 
   // we need a backup torus to copy new values into
   chromosome **torus;
   chromosome **backup;
@@ -52,10 +54,12 @@ chromosome serialTorusTest(int n, int m, graph g){
         sortChromosomes(neighbors, g, NUM_NEIGHBORS);
 
         // replace this chrom with a crossover of fittest neighbors (or don't)
-        if(evaluateFitness(torus[i][j], g) > evaluateFitness(neighbors[0], g))
+        if(evaluateFitness(torus[i][j], g) >= evaluateFitness(neighbors[NUM_NEIGHBORS - 1], g)){
           backup[i][j] = torus[i][j];
-        else
-          backup[i][j] = crossover(neighbors[0], neighbors[1]);
+          maybeMutate(backup[i][j], NUMERATOR, DENOMINATOR);
+        }else{
+          backup[i][j] = crossover(neighbors[NUM_NEIGHBORS - 1], neighbors[NUM_NEIGHBORS - 2]);
+        }
       }
     } // end i-j loop
 
@@ -82,8 +86,14 @@ int main(int argc, char **argv){
   // ============= BEGIN MAIN =============
   srand(24); // lucky number
 
-  if(argc != 3){
-    printf("Usage: ./parallel [n] [m]\n");
+  if(argc != 7){
+    printf(" \n");
+    printf(" Usage: ./parallel [n] [m] [width] [height] [num] [denom] \n");
+    printf(" \n");
+    printf("     - num/denom is the mutation likelihood\n");
+    printf("     - width and height are the torus dimensions\n");
+    printf(" \n");
+    printf(" \n");
     exit(-1);
   }
 
@@ -91,6 +101,11 @@ int main(int argc, char **argv){
 
   n = atoi(argv[1]);
   m = atoi(argv[2]);
+  TORUS_WIDTH = atoi(argv[3]);
+  TORUS_HEIGHT = atoi(argv[4]);
+  NUMERATOR = atoi(argv[5]);
+  DENOMINATOR = atoi(argv[6]);
+
 
   chromosome c = getRandomChromosome(n);
   
@@ -108,20 +123,17 @@ int main(int argc, char **argv){
   srand(rank); // lucky number
 
   if(rank == ROOT){
-    printf("Begin serial test:\n");
+    printf("STARTING PARALLEL TEST:\n");
     timing(&wctime, &cputime);
     
     graph g = getRandomGraph(n, m);
 
-    printf("Root sending graph...\n");
     for(int i = 0; i < n; i++){
       MPI_Bcast(g.adj_matrix[i], n, MPI_INT, ROOT, MPI_COMM_WORLD);
     }
-    printf("Root done sending graph\n");
     
     for(int iter = 0; iter < PARALLEL_ITERATIONS; iter++){
       MPI_Barrier(MPI_COMM_WORLD);
-      printf("Begin iteration %d\n", iter);
     }
 
 
@@ -143,8 +155,8 @@ int main(int argc, char **argv){
     }
     
     timing(&wctime_end, &cputime);
-    printf("Parallel time: %lf\n", wctime_end - wctime);
-    printf("\tParallel fitness eval: %d\n", evaluateFitness(solution, g));
+    printf("\tParallel time: %lf\n", wctime_end - wctime);
+    printf("\tParallel fitness eval: %lf\n\n", evaluateFitness(solution, g) / (double)(n + n*n*n));
     MPI_Finalize();
     
     // ========== BEGIN APPROX TEST ==========
@@ -154,8 +166,8 @@ int main(int argc, char **argv){
     chromosome approx_solution = randomSolution(g);
     timing(&wctime_end, &cputime); 
     
-    printf("\tApprox fitness eval: %d\n", evaluateFitness(approx_solution, g)); 
-    printf("\tApprox time: %lf\n\n", wctime_end - wctime);
+    printf("\tApprox time: %lf\n", wctime_end - wctime);
+    printf("\tApprox fitness eval: %lf\n\n", evaluateFitness(approx_solution, g) / (double)(n + n*n*n)); 
     
     // ========== BEGIN SERIAL TEST ==========
     printf("STARTING SERIAL TEST\n");
@@ -164,8 +176,8 @@ int main(int argc, char **argv){
     chromosome serial_solution = serialTorusTest(n, m, g);
     timing(&wctime_end, &cputime);
     
-    printf("\tSerial Solution fitness eval: %d\n", evaluateFitness(serial_solution, g));
-    printf("\tSerial time: %lf\n\n", wctime_end - wctime);
+    printf("\tSerial time: %lf\n", wctime_end - wctime);
+    printf("\tSerial Solution fitness eval: %lf\n\n", evaluateFitness(serial_solution, g) / (double)(n + n*n*n));
     return 0;
   } else {
     // WORKER CODE
@@ -175,14 +187,10 @@ int main(int argc, char **argv){
     g.m = m;
     g.n = n;
 
-    printf("Process %d receiving graph..\n", rank);
     for(int i = 0; i < n; i++){
       MPI_Bcast(g.adj_matrix[i], n, MPI_INT, ROOT, MPI_COMM_WORLD);
     }
-    printf("Process %d done receiving graph\n", rank);
    
-    // chromosome chrom[TORUS_HEIGHT];
-    // chromosome back[TORUS_HEIGHT];
     chromosome *chrom = malloc(TORUS_HEIGHT * sizeof(chromosome));
     chromosome *back  = malloc(TORUS_HEIGHT * sizeof(chromosome));
 
@@ -307,16 +315,11 @@ int main(int argc, char **argv){
         neighbors[2] = left[i];
         neighbors[3] = right[i];
         sortChromosomes(neighbors, g, 4);
-        printf("Rank %d at fitness %d\n", rank, evaluateFitness(chrom[i], g));
-        for(int z = 0 ; z < 4; z++){
-          printf("\t\tneighbor %d has fitness %d\n", z, evaluateFitness(neighbors[z], g));
-        }
         
-        if(evaluateFitness(chrom[i], g) > evaluateFitness(neighbors[3], g)){
-          printf("\tI'm the best!! %d vs %d\n", evaluateFitness(chrom[i], g), evaluateFitness(neighbors[3], g));
+        if(evaluateFitness(chrom[i], g) >= evaluateFitness(neighbors[3], g)){
           back[i] = chrom[i];
+          maybeMutate(back[i], NUMERATOR, DENOMINATOR);
         } else {
-          printf("\tCrossing over!!\n");
           back[i] = crossover(neighbors[2], neighbors[3]);
         }
       }
