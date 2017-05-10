@@ -29,7 +29,6 @@ graph getRandomGraph(int n, int m);
 
 long evaluateFitness(chromosome c, graph g);
 
-// TODO do we need this?
 chromosome randomSolution(graph g);
 
 chromosome crossover(chromosome c, chromosome d);

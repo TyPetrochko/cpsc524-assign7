@@ -105,6 +105,7 @@ int main(int argc, char **argv){
   NUMERATOR = atoi(argv[5]);
   DENOMINATOR = atoi(argv[6]);
 
+
   chromosome c = getRandomChromosome(n);
   
   double wctime, wctime_end, cputime;
@@ -154,9 +155,9 @@ int main(int argc, char **argv){
         solution = next;
     }
 
-    long parallel_fitness, approx_fitness, serial_fitness;
-    double parallel_time, approx_time, serial_time;
-
+    long parallel_time, parallel_fitness;
+    long approx_time, approx_fitness;
+    long serial_time, serial_fitness;
     long random_fitness = evaluateFitness(getRandomChromosome(n), g);
     
     timing(&wctime_end, &cputime);
@@ -182,9 +183,9 @@ int main(int argc, char **argv){
     serial_time = wctime_end - wctime;
     serial_fitness = evaluateFitness(serial_solution, g) - random_fitness;
    
-    printf("%8lf \t %8ld\t", serial_time, serial_fitness);
-    printf("%8lf \t %8ld\t", approx_time, approx_fitness);
-    printf("%8lf \t %8ld\t\n", parallel_time, parallel_fitness);
+    printf("%8lf \t %8lf\t", serial_time, serial_fitness);
+    printf("%8lf \t %8lf\t", approx_time, approx_fitness);
+    printf("%8lf \t %8lf\t\n", parallel_time, parallel_fitness);
     return 0;
   } else {
     // WORKER CODE

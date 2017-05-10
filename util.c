@@ -77,7 +77,6 @@ long evaluateFitness(chromosome c, graph g){
       exit(-1);
     }
 
-
     for(int j = i; j < g.n; j++){
       sum += g.n * (1 - c.cover[i]) * ((1 - c.cover[j]) * g.adj_matrix[i][j]);
     }
@@ -89,6 +88,7 @@ long evaluateFitness(chromosome c, graph g){
   return a; // we want to MINIMIZE this value
 }
 
+// heuristic approach
 chromosome randomSolution(graph g){
   chromosome toReturn;
   toReturn.n = g.n;
@@ -97,7 +97,6 @@ chromosome randomSolution(graph g){
   graph gprime = copyGraph(g);
 
   while(gprime.m > 0){
-    
     // randomly choose an edge
     int i = 0;
     int j = 0;
@@ -177,46 +176,8 @@ void getNeighbors(chromosome* buf, int x, int y, chromosome **torus, int width, 
   buf[3] = torus[y][(x + width - 1) % width]; // left
 }
 
-// NOTE: Quicksort impl. derived from:
-//    http://www.comp.dit.ie/rlawlor/Alg_DS/sorting/quickSort.c
-
-int partition(chromosome a[], int l, int r, graph g);
-
-// aux helper for quicksort
-void quickSort(chromosome a[], int l, int r, graph g)
-{
-  int j;
-
-  if( l < r ) 
-  {
-   // divide and conquer
-   j = partition(a, l, r, g);
-   quickSort(a, l, j-1, g);
-   quickSort(a, j+1, r, g);
-  }
-}
-
-// another aux helper for quicksort
-int partition(chromosome a[], int l, int r, graph g) {
-  int pivot, i, j;
-  chromosome t;
-  pivot = evaluateFitness(a[l], g);
-  i = l; j = r+1;
-   
-  while(1)
-  {
-    do ++i; while( i <= r && evaluateFitness(a[i], g) <= pivot);
-    do --j; while( i >= j &&  evaluateFitness(a[j], g) > pivot );
-    if( i >= j ) break;
-    t = a[i]; a[i] = a[j]; a[j] = t;
-  }
-  t = a[l]; a[l] = a[j]; a[j] = t;
-  return j;
-}
-
 // only need the top two sorted...
 void sortChromosomes(chromosome *chroms, graph g, int n){
-
   for(int i = 0; i < 1; i++){
     if(evaluateFitness(chroms[i], g) > evaluateFitness(chroms[3], g)){
       chromosome tmp = chroms[i];
@@ -228,6 +189,5 @@ void sortChromosomes(chromosome *chroms, graph g, int n){
       chroms[2] = tmp;
     }
   }
-  //quickSort(chroms, 0, n - 1, g);
 }
 
