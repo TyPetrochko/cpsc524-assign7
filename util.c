@@ -191,6 +191,6 @@ int partition(chromosome a[], int l, int r, graph g) {
 }
 
 void sortChromosomes(chromosome *chroms, graph g, int n){
-  quickSort(chroms, 0, 3, g);
+  quickSort(chroms, 0, n - 1, g);
 }
 

@@ -1,26 +1,20 @@
-CC = icpc
+CC = icc
+CFLAGS = -g -O3 -xHost -fno-alias -std=c99
+FC = ifort
+FFLAGS = -g -O3 -xHost -fno-alias
 MPICC = mpicc
 
-CFLAGS= -g -O3 -xHost -mkl -fno-alias -qopenmp
-#CFLAGS= -g -O0 -xHost -mkl -fno-alias -qopenmp
+all: serial parallel
 
-OPTFLAGS = -qopt-report -qopt-report-file=$@.optrpt 
+parallel: parallel.o timing.o util.o
+	$(MPICC) -o $@ $(CFLAGS) $^
 
-TARGETS = mvcp-ga timing util
-TARGETOBJECTS = mvcp-ga.o timing.o util.o
-
-.SUFFIXES: .o .c
-
-all: $(TARGETS)
-
-
-$(TARGETS): $(TARGETOBJECTS)
+serial:	serial.o timing.o util.o
 	$(CC) -o $@ $(CFLAGS) $^
 
 .c.o:
-	$(CC) $(CFLAGS) -c $(OPTFLAGS) -o $@ $<
+	$(CC) $(CFLAGS) -c $<
 
-clean: 
-	rm -f $(TARGETOBJECTS) $(TARGETS) *.optrpt
-
+clean:
+	rm -f mvcp-ga *.o
 

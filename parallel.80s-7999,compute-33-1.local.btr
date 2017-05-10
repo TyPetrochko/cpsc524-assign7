@@ -1,0 +1,7 @@
+
+parallel:7999 terminated with signal 11 at PC=402aac SP=7fff2bd68318.  Backtrace:
+parallel[0x402aac]
+parallel[0x402764]
+parallel[0x40175c]
+/lib64/libc.so.6(__libc_start_main+0xfd)[0x39de21ed5d]
+parallel[0x400bf9]
