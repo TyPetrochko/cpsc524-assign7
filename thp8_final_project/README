@@ -1,0 +1,26 @@
+
+#### Building ####
+
+To build this program, use command "make all"
+
+To load required modules:
+
+  module load Langs/Intel/15; module load Langs/Intel/15 MPI/OpenMPI/1.8.6-intel15
+
+#### Running ####
+
+Usage: ./parallel [n] [m] [width] [height] [num] [denom]
+
+     - num/denom is the mutation likelihood
+     - width and height are the torus dimensions
+
+
+Run ./data.sh, ./randomness.sh, or ./scale.sh to get the data I used in my report.
+Note that even though I use seeds, the results won't perfectly match because of the
+ordering in which different processors call rand().
+
+#### Code structure ####
+
+Most of the logic is in parallel.c, although the heuristic approximation and the
+utility functions are all in util.c and util.h.
+
