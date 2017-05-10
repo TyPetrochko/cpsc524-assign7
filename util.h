@@ -27,7 +27,7 @@ chromosome getRandomChromosome(int n);
 
 graph getRandomGraph(int n, int m);
 
-int evaluateFitness(chromosome c, graph g);
+long evaluateFitness(chromosome c, graph g);
 
 // TODO do we need this?
 chromosome randomSolution(graph g);

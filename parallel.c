@@ -38,8 +38,6 @@ chromosome serialTorusTest(int n, int m, graph g){
     for(int j = 0; j < TORUS_WIDTH; j++){
       torus[i][j] = getRandomChromosome(n);
     }
-
-    // sortChromosomes(torus[i], g);
   }
 
   for(int iter = 0; iter < PARALLEL_ITERATIONS; iter++){
@@ -123,7 +121,7 @@ int main(int argc, char **argv){
   srand(rank); // lucky number
 
   if(rank == ROOT){
-    printf("STARTING PARALLEL TEST:\n");
+    // printf("STARTING PARALLEL TEST:\n");
     timing(&wctime, &cputime);
     
     graph g = getRandomGraph(n, m);
@@ -153,31 +151,48 @@ int main(int argc, char **argv){
       if(evaluateFitness(next, g) > evaluateFitness(solution, g))
         solution = next;
     }
+
+    double parallel_time, parallel_fitness;
+    double approx_time, approx_fitness;
+    double serial_time, serial_fitness;
+    long denom = n*n*n;
     
     timing(&wctime_end, &cputime);
-    printf("\tParallel time: %lf\n", wctime_end - wctime);
-    printf("\tParallel fitness eval: %lf\n\n", evaluateFitness(solution, g) / (double)(n + n*n*n));
+    parallel_time = wctime_end - wctime;
+    parallel_fitness = evaluateFitness(solution, g) / (double)denom;
+    // printf("\tParallel time: %lf\n", wctime_end - wctime);
+    // printf("\tParallel fitness eval: %lf\n\n", parallel_fitness);
     MPI_Finalize();
     
     // ========== BEGIN APPROX TEST ==========
-    printf("STARTING APPROX TEST\n");
+    // printf("STARTING APPROX TEST\n");
     
     timing(&wctime, &cputime);
     chromosome approx_solution = randomSolution(g);
     timing(&wctime_end, &cputime); 
     
-    printf("\tApprox time: %lf\n", wctime_end - wctime);
-    printf("\tApprox fitness eval: %lf\n\n", evaluateFitness(approx_solution, g) / (double)(n + n*n*n)); 
+    approx_time = wctime_end - wctime;
+    approx_fitness = evaluateFitness(approx_solution, g) / (double)(denom);
+    
+    // printf("\tApprox time: %lf\n", approx_time);
+    // printf("\tApprox fitness eval: %lf\n\n", approx_fitness); 
     
     // ========== BEGIN SERIAL TEST ==========
-    printf("STARTING SERIAL TEST\n");
+    // printf("STARTING SERIAL TEST\n");
     
     timing(&wctime, &cputime);
     chromosome serial_solution = serialTorusTest(n, m, g);
     timing(&wctime_end, &cputime);
     
-    printf("\tSerial time: %lf\n", wctime_end - wctime);
-    printf("\tSerial Solution fitness eval: %lf\n\n", evaluateFitness(serial_solution, g) / (double)(n + n*n*n));
+    serial_time = wctime_end - wctime;
+    serial_fitness = evaluateFitness(serial_solution, g) / (double) (denom);
+    
+    // printf("\tSerial time: %lf\n", wctime_end - wctime);
+    // printf("\tSerial Solution fitness eval: %lf\n\n", serial_solution);
+    
+    printf("%8lf \t %8lf\t", serial_time, serial_fitness);
+    printf("%8lf \t %8lf\t", approx_time, approx_fitness);
+    printf("%8lf \t %8lf\t\n", parallel_time, parallel_fitness);
     return 0;
   } else {
     // WORKER CODE

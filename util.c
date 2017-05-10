@@ -67,16 +67,25 @@ chromosome getRandomChromosome(int n){
   return toReturn;
 }
 
-int evaluateFitness(chromosome c, graph g){
-  int sum = 0;
+long evaluateFitness(chromosome c, graph g){
+  long sum = 0;
   for(int i = 0; i < g.n; i++){
     sum += c.cover[i];
 
+    if(c.cover[i] < 0 || c.cover[i] > 1){
+      printf("PROGRAM ERROR: Bad chromosome!\n");
+      exit(-1);
+    }
+
+
     for(int j = i; j < g.n; j++){
-      sum += g.n * (1 - c.cover[i]) * (1 - c.cover[j] * g.adj_matrix[i][j]);
+      sum += g.n * (1 - c.cover[i]) * ((1 - c.cover[j]) * g.adj_matrix[i][j]);
     }
   }
-  int a = ((g.n + (g.n*g.n*g.n) - sum));
+  long a = (((g.n*g.n*g.n) - sum));
+  if(sum < 0 || a < 0){
+    printf("Yep, negative\n");
+  }
   return a; // we want to MINIMIZE this value
 }
 
@@ -132,8 +141,8 @@ escape:
 void maybeMutate(chromosome c, int num, int denom){
   if(!MUTATE)
     return;
-  
-  if((rand() % denom) > (num - denom)){
+
+  if((rand() % denom) > (denom - num)){
     int flip1 = rand() % c.n;
     int flip2 = rand() % c.n;
 
@@ -205,7 +214,20 @@ int partition(chromosome a[], int l, int r, graph g) {
   return j;
 }
 
+// only need the top two sorted...
 void sortChromosomes(chromosome *chroms, graph g, int n){
-  quickSort(chroms, 0, n - 1, g);
+
+  for(int i = 0; i < 1; i++){
+    if(evaluateFitness(chroms[i], g) > evaluateFitness(chroms[3], g)){
+      chromosome tmp = chroms[i];
+      chroms[i] = chroms[3];
+      chroms[3] = tmp;
+    } else if(evaluateFitness(chroms[i], g) > evaluateFitness(chroms[2], g)){
+      chromosome tmp = chroms[i];
+      chroms[i] = chroms[2];
+      chroms[2] = tmp;
+    }
+  }
+  //quickSort(chroms, 0, n - 1, g);
 }
 
